@@ -20,7 +20,7 @@ public class Movimiento extends AbstractEntity<Long>{
     private BigDecimal valor;
 
     @ManyToOne
-    @JoinColumn(name = "cuanta_id", nullable = false)
+    @JoinColumn(name = "cuenta_id", nullable = false)
     private Cuenta cuenta;
 
     @Builder
