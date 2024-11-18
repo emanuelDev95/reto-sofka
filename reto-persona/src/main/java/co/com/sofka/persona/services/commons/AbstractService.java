@@ -4,9 +4,11 @@ import co.com.sofka.persona.exceptions.ResourceNotFoundException;
 import co.com.sofka.persona.mappers.GenericMapper;
 import co.com.sofka.persona.persistence.entities.AbstractEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Transactional
 public abstract class AbstractService<E extends AbstractEntity<K>, D, K> implements GenericService<D,K> {
 
     protected JpaRepository<E,K> repository;
@@ -24,9 +26,9 @@ public abstract class AbstractService<E extends AbstractEntity<K>, D, K> impleme
 
     @Override
     public D save(D dto) {
-        var entitie = this.mapper.toEntity(dto);
-        this.repository.saveAndFlush(entitie);
-        return this.mapper.toDto(entitie);
+        var entity = this.mapper.toEntity(dto);
+        this.repository.saveAndFlush(entity);
+        return this.mapper.toDto(entity);
     }
 
     @Override
@@ -56,8 +58,8 @@ public abstract class AbstractService<E extends AbstractEntity<K>, D, K> impleme
         if(!this.repository.existsById(id)) {
             throw new ResourceNotFoundException(this.notFoundMessage);
         }
-        var entitie = this.mapper.toEntity(dto);
-        entitie.setId(id);
-        return this.mapper.toDto(this.repository.saveAndFlush(entitie));
+        var entity = this.mapper.toEntity(dto);
+        entity.setId(id);
+        return this.mapper.toDto(this.repository.saveAndFlush(entity));
     }
 }
