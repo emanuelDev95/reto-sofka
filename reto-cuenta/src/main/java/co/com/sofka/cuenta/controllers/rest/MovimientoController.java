@@ -2,18 +2,22 @@ package co.com.sofka.cuenta.controllers.rest;
 
 import co.com.sofka.cuenta.models.dto.movimiento.MovimientoDTO;
 import co.com.sofka.cuenta.models.dto.movimiento.MovimientoRequestDTO;
+import co.com.sofka.cuenta.models.dto.movimiento.ReporteMovimientoDTO;
 import co.com.sofka.cuenta.models.response.MessageResponse;
 import co.com.sofka.cuenta.service.MovimientoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/movimientos")
+@RequestMapping("/api/movimientos")
 @RequiredArgsConstructor
 public class MovimientoController {
 
@@ -48,7 +52,7 @@ public class MovimientoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<MessageResponse<Void>> deleteById(@PathVariable @NonNull Long id){
+    public ResponseEntity<MessageResponse<Void>> deleteById(@PathVariable @NonNull Long id) {
         this.movimientoService.delete(id);
         return ResponseEntity.ok(MessageResponse.<Void>builder()
                 .statusCode(HttpStatus.OK.value())
@@ -59,13 +63,25 @@ public class MovimientoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<MessageResponse<MovimientoDTO>> update(@RequestBody MovimientoRequestDTO dto,
-                                                             @PathVariable @NonNull Long id) {
+                                                                 @PathVariable @NonNull Long id) {
         return ResponseEntity.ok(MessageResponse.<MovimientoDTO>builder()
                 .message("Exito")
                 .statusCode(HttpStatus.OK.value())
-                .data(this.movimientoService.update(dto,id))
+                .data(this.movimientoService.update(dto, id))
                 .build());
 
 
     }
+
+    @GetMapping("/reporte")
+    public ResponseEntity<MessageResponse<List<ReporteMovimientoDTO>>> getReporte(@RequestParam("startDate")
+                                                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+                                                                                  @RequestParam("endDate")
+                                                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+                                                                                  @RequestParam Long cliente) {
+        List<ReporteMovimientoDTO> reportes = movimientoService.getReportByDateAndCustomer(startDate, endDate, cliente);
+        return ResponseEntity.ok(new MessageResponse<>("OK", HttpStatus.OK.value(), reportes));
+    }
+
+
 }

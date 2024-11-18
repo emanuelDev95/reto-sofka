@@ -1,13 +1,15 @@
 package co.com.sofka.cuenta.mappers;
 
+import co.com.sofka.cuenta.models.dto.cliente.ClienteDto;
 import co.com.sofka.cuenta.models.dto.movimiento.MovimientoDTO;
 import co.com.sofka.cuenta.models.dto.movimiento.MovimientoRequestDTO;
+import co.com.sofka.cuenta.models.dto.movimiento.ReporteMovimientoDTO;
 import co.com.sofka.cuenta.persistence.entities.Cuenta;
 import co.com.sofka.cuenta.persistence.entities.Movimiento;
+import co.com.sofka.cuenta.persistence.projections.report.MovimientoProjection;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Component
 public class MovimientoMapper{
@@ -16,10 +18,10 @@ public class MovimientoMapper{
 
         return  MovimientoDTO.builder()
                 .id(movimiento.getId())
-                .fecha(movimiento.getFecha().toInstant())
-                .saldo(movimiento.getCuenta().getSaldo())
+                .fecha(movimiento.getFecha())
+                .saldo(movimiento.getCuenta().getSaldoDisponible().longValue())
                 .tipoMovimiento(movimiento.getTipoMovimiento())
-                .valor(movimiento.getValor())
+                .valor(movimiento.getValor().longValue())
                 .build();
     }
 
@@ -29,10 +31,26 @@ public class MovimientoMapper{
                 .build();
 
         return Movimiento.builder()
-                .fecha(Date.from(Instant.now()))
+                .fecha(LocalDateTime.now())
                 .tipoMovimiento(dto.tipoMovimiento())
                 .valor(dto.monto())
                 .cuenta(cuenta)
+                .build();
+    }
+
+    public ReporteMovimientoDTO entityToReportDTO(MovimientoProjection movimiento, ClienteDto clienteDto){
+
+        var cuenta = movimiento.getCuenta();
+
+        return ReporteMovimientoDTO.builder()
+                .fecha(movimiento.getFecha())
+                .cliente(clienteDto.nombre())
+                .numeroCuenta(cuenta.getNumeroCuenta())
+                .tipo(cuenta.getTipoCuenta())
+                .saldoInicial(cuenta.getSaldoInicial().longValue())
+                .estado(cuenta.getEstado())
+                .movimiento(movimiento.getValor().longValue())
+                .saldoDisponible(cuenta.getSaldoDisponible().longValue())
                 .build();
     }
 

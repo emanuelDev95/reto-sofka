@@ -1,17 +1,18 @@
 package co.com.sofka.cuenta.models.dto.movimiento;
 
 import co.com.sofka.cuenta.persistence.entities.TipoMovimiento;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 
-import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Builder
 public record MovimientoDTO(
         Long id,
-        Instant fecha,
+        @JsonFormat(pattern = "dd/MM/yyyy")
+        LocalDateTime fecha,
         TipoMovimiento tipoMovimiento,
-        BigDecimal valor,
-        BigDecimal saldo
+        Long valor,
+        Long saldo
 ) {
 }

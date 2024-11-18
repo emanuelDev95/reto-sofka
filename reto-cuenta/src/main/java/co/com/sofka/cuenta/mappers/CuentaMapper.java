@@ -14,7 +14,7 @@ public class CuentaMapper  {
         return CuentaRequestDto.builder()
                 .numeroCuenta(cuenta.getNumeroCuenta())
                 .tipoCuenta(cuenta.getTipoCuenta())
-                .saldoInicial(cuenta.getSaldo())
+                .saldoInicial(cuenta.getSaldoInicial())
                 .estado(cuenta.getEstado())
                 .clienteId(cuenta.getClienteId())
                 .build();
@@ -25,7 +25,8 @@ public class CuentaMapper  {
         return Cuenta.builder()
                 .numeroCuenta(cuentaRequestDto.numeroCuenta())
                 .tipoCuenta(cuentaRequestDto.tipoCuenta())
-                .saldo(cuentaRequestDto.saldoInicial())
+                .saldoInicial(cuentaRequestDto.saldoInicial())
+                .saldoDisponible(cuentaRequestDto.saldoInicial())
                 .estado(cuentaRequestDto.estado())
                 .clienteId(cuentaRequestDto.clienteId())
                 .build();
@@ -36,7 +37,7 @@ public class CuentaMapper  {
         return  CuentaDto.builder()
                 .numeroCuenta(cuenta.getNumeroCuenta())
                 .tipo(cuenta.getTipoCuenta())
-                .saldo(cuenta.getSaldo())
+                .saldo(cuenta.getSaldoDisponible())
                 .estado(cuenta.getEstado())
                 .cliente(clienteDto.nombre())
                 .build();

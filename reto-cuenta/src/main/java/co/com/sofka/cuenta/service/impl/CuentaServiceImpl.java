@@ -39,11 +39,11 @@ public class CuentaServiceImpl implements CuentaService {
 
     @Override
     public List<CuentaDto> getAll() {
-        var cuentas =  cuentaRepository.findAll();
+        var cuentas = cuentaRepository.findAll();
 
         var cuentasMap = cuentas
                 .stream()
-                .collect(Collectors.toMap(Cuenta::getClienteId, cuenta -> cuenta));
+                .collect(Collectors.groupingBy(Cuenta::getClienteId));
 
         var clientes = cuentas.stream()
                 .map(Cuenta::getClienteId)
@@ -51,13 +51,12 @@ public class CuentaServiceImpl implements CuentaService {
                 .map(clienteService::getClienteById)
                 .toList();
 
-       return clientes.stream()
-                .map(clienteDto -> cuentaMapper.cuentaToCuentaDto(cuentasMap.get(clienteDto.id()), clienteDto))
+        return clientes.stream()
+                .flatMap(clienteDto -> cuentasMap.get(clienteDto.id()).stream()
+                        .map(cuenta -> cuentaMapper.cuentaToCuentaDto(cuenta, clienteDto)))
                 .toList();
-
-
-
     }
+
 
     @Override
     public CuentaDto getById(Long id) {
@@ -76,7 +75,14 @@ public class CuentaServiceImpl implements CuentaService {
 
     @Override
     public CuentaDto update(CuentaRequestDto dto, Long id) {
-        var cuenta = cuentaRepository.saveAndFlush(cuentaMapper.cuentaToCuentaRequestDto(dto));
+        var cuenta = cuentaRepository.findById(id)
+                .orElseThrow(() -> new  ResourceNotFoundException(CUENTA_NO_ENCONTRADA));
+
+        cuenta = cuentaMapper.cuentaToCuentaRequestDto(dto);
+
+        cuenta.setId(id);
+
+        cuentaRepository.saveAndFlush(cuenta);
         var cliente = clienteService.getClienteById(cuenta.getClienteId());
         return cuentaMapper.cuentaToCuentaDto(cuenta, cliente);
     }

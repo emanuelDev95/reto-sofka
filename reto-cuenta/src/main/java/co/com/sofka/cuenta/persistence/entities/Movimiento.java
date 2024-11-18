@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity(name = "movimientos")
@@ -14,7 +15,7 @@ import java.util.Date;
 public class Movimiento extends AbstractEntity<Long>{
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date fecha;
+    private LocalDateTime fecha;
     @Enumerated(EnumType.STRING)
     private TipoMovimiento tipoMovimiento;
     private BigDecimal valor;
@@ -24,7 +25,7 @@ public class Movimiento extends AbstractEntity<Long>{
     private Cuenta cuenta;
 
     @Builder
-    public Movimiento(Long id, Date fecha, TipoMovimiento tipoMovimiento, BigDecimal valor, Cuenta cuenta) {
+    public Movimiento(Long id, LocalDateTime fecha, TipoMovimiento tipoMovimiento, BigDecimal valor, Cuenta cuenta) {
         super(id);
         this.fecha = fecha;
         this.tipoMovimiento = tipoMovimiento;
