@@ -30,8 +30,8 @@ public class CuentaServiceImpl implements CuentaService {
 
     @Override
     public CuentaDto save(CuentaRequestDto cuentaRequestDto) {
+        var cliente = clienteService.getClienteById(cuentaRequestDto.clienteId());
         var cuenta = cuentaRepository.saveAndFlush(cuentaMapper.cuentaToCuentaRequestDto(cuentaRequestDto));
-        var cliente = clienteService.getClienteById(cuenta.getClienteId());
         return cuentaMapper.cuentaToCuentaDto(cuenta, cliente);
     }
 

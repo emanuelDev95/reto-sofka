@@ -1,5 +1,6 @@
 package co.com.sofka.cuenta.service.impl;
 
+import co.com.sofka.cuenta.exceptions.BadRequestException;
 import co.com.sofka.cuenta.exceptions.ResourceNotFoundException;
 import co.com.sofka.cuenta.exceptions.SaldoInsuficienteException;
 import co.com.sofka.cuenta.mappers.MovimientoMapper;
@@ -96,13 +97,13 @@ public class MovimientoServiceImpl implements MovimientoService {
     public List<ReporteMovimientoDTO> getReportByDateAndCustomer(LocalDateTime start, LocalDateTime end, Long customerId){
 
         if(end.isBefore(start)){
-            throw new ResourceNotFoundException(END_DATE_BEFORE_START_ERROR);
+            throw new BadRequestException(END_DATE_BEFORE_START_ERROR);
         }
         var movimientos = movimientoRepository.findByCuentaClienteIdAndFechaBetween(customerId, start, end,
                 MovimientoProjection.class);
 
         var movimientosMap = movimientos.stream()
-                .collect(Collectors.groupingBy(movimientoProjection -> movimientoProjection.getCuenta().getClienteId()));
+                .collect(Collectors.groupingBy(movimiento -> movimiento.getCuenta().getClienteId()));
 
         var clientes = movimientos.stream()
                 .map(movimiento -> movimiento.getCuenta().getClienteId())
@@ -111,8 +112,8 @@ public class MovimientoServiceImpl implements MovimientoService {
                 .toList();
 
         return clientes.stream()
-                .flatMap(clienteDto -> movimientosMap.get(clienteDto.id()).stream()
-                        .map(movimiento -> movimientoMapper.entityToReportDTO(movimiento, clienteDto)))
+                .flatMap(cliente -> movimientosMap.get(cliente.id()).stream()
+                        .map(movimiento -> movimientoMapper.entityToReportDTO(movimiento, cliente)))
                 .toList();
 
 

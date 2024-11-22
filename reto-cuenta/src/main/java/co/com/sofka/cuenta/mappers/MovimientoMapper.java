@@ -6,9 +6,11 @@ import co.com.sofka.cuenta.models.dto.movimiento.MovimientoRequestDTO;
 import co.com.sofka.cuenta.models.dto.movimiento.ReporteMovimientoDTO;
 import co.com.sofka.cuenta.persistence.entities.Cuenta;
 import co.com.sofka.cuenta.persistence.entities.Movimiento;
+import co.com.sofka.cuenta.persistence.entities.TipoMovimiento;
 import co.com.sofka.cuenta.persistence.projections.report.MovimientoProjection;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Component
@@ -32,7 +34,7 @@ public class MovimientoMapper{
 
         return Movimiento.builder()
                 .fecha(LocalDateTime.now())
-                .tipoMovimiento(dto.tipoMovimiento())
+                .tipoMovimiento(dto.monto().compareTo(BigDecimal.ZERO) < 0? TipoMovimiento.RETIRO: TipoMovimiento.DEPOSITO)
                 .valor(dto.monto())
                 .cuenta(cuenta)
                 .build();
