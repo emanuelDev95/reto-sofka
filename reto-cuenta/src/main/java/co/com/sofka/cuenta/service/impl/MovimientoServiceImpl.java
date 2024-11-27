@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static co.com.sofka.cuenta.constants.CuentaConstant.CUENTA_NO_ENCONTRADA;
@@ -49,10 +50,10 @@ public class MovimientoServiceImpl implements MovimientoService {
             validarSaldoDisponible(cuenta, movimientoRequestDTO.monto());
         }
         actualizarSaldoCuenta(cuenta, movimientoRequestDTO.monto());
-        var movimiento = movimientoMapper.requestToEntity(movimientoRequestDTO);
+        var movimiento = this.movimientoMapper.requestToEntity(movimientoRequestDTO);
         movimiento.setCuenta(cuenta);
-        movimientoRepository.saveAndFlush(movimiento);
-        return movimientoMapper.toResponseDTO(movimiento);
+        this.movimientoRepository.saveAndFlush(movimiento);
+        return this.movimientoMapper.toResponseDTO(movimiento);
 
 
     }
@@ -79,18 +80,18 @@ public class MovimientoServiceImpl implements MovimientoService {
     @Override
     public MovimientoDTO update(MovimientoRequestDTO dto, Long id) {
 
-        validarMonto(dto.monto());
+        this.validarMonto(dto.monto());
         Cuenta cuenta = obtenerCuentaPorId(dto.cuentaId());
 
         if (dto.monto().compareTo(BigDecimal.ZERO) < 0) {
-            validarSaldoDisponible(cuenta, dto.monto());
+            this.validarSaldoDisponible(cuenta, dto.monto());
         }
-        var movimiento = movimientoMapper.requestToEntity(dto);
+        var movimiento = this.movimientoMapper.requestToEntity(dto);
         movimiento.setId(id);
-        actualizarSaldoCuenta(cuenta, dto.monto());
+        this.actualizarSaldoCuenta(cuenta, dto.monto());
         movimiento.setCuenta(cuenta);
-        movimientoRepository.saveAndFlush(movimiento);
-        return movimientoMapper.toResponseDTO(movimiento);
+        this.movimientoRepository.saveAndFlush(movimiento);
+        return this.movimientoMapper.toResponseDTO(movimiento);
     }
 
     @Override
@@ -99,21 +100,13 @@ public class MovimientoServiceImpl implements MovimientoService {
         if(end.isBefore(start)){
             throw new BadRequestException(END_DATE_BEFORE_START_ERROR);
         }
-        var movimientos = movimientoRepository.findByCuentaClienteIdAndFechaBetween(customerId, start, end,
+        var cliente =  this.clienteService.getClienteById(customerId);
+
+        var movimientos = this.movimientoRepository.findByCuentaClienteIdAndFechaBetween(customerId, start, end,
                 MovimientoProjection.class);
 
-        var movimientosMap = movimientos.stream()
-                .collect(Collectors.groupingBy(movimiento -> movimiento.getCuenta().getClienteId()));
-
-        var clientes = movimientos.stream()
-                .map(movimiento -> movimiento.getCuenta().getClienteId())
-                .distinct()
-                .map(clienteService::getClienteById)
-                .toList();
-
-        return clientes.stream()
-                .flatMap(cliente -> movimientosMap.get(cliente.id()).stream()
-                        .map(movimiento -> movimientoMapper.entityToReportDTO(movimiento, cliente)))
+        return movimientos.stream()
+                .map(movimiento-> this.movimientoMapper.entityToReportDTO(movimiento, cliente))
                 .toList();
 
 
@@ -122,13 +115,13 @@ public class MovimientoServiceImpl implements MovimientoService {
 
 
     private void validarMonto(BigDecimal monto) {
-        if (monto == null || monto.compareTo(BigDecimal.ZERO) == 0) {
+        if (Objects.isNull(monto) || BigDecimal.ZERO.compareTo(monto) ==0) {
             throw new IllegalArgumentException(MONTO_INCORRECTO);
         }
     }
 
     private Cuenta obtenerCuentaPorId(Long cuentaId) {
-        return cuentaRepository.findById(cuentaId)
+        return this.cuentaRepository.findById(cuentaId)
                 .orElseThrow(() -> new ResourceNotFoundException(CUENTA_NO_ENCONTRADA));
     }
 
@@ -141,6 +134,6 @@ public class MovimientoServiceImpl implements MovimientoService {
     private void actualizarSaldoCuenta(Cuenta cuenta, BigDecimal monto) {
         BigDecimal nuevoSaldo = cuenta.getSaldoDisponible().add(monto);
         cuenta.setSaldoDisponible(nuevoSaldo);
-        cuentaRepository.save(cuenta);
+        this.cuentaRepository.save(cuenta);
     }
 }
