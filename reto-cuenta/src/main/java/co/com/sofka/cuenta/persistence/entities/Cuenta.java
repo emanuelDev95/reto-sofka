@@ -43,5 +43,18 @@ public class Cuenta extends AbstractEntity<Long> {
         this.clienteId = clienteId;
         this.movimientos = movimientos;
     }
+
+    @Override
+    public String toString() {
+        return "Cuenta{" +
+                "numeroCuenta='" + numeroCuenta + '\'' +
+                ", tipoCuenta=" + tipoCuenta +
+                ", saldoDisponible=" + saldoDisponible +
+                ", saldoInicial=" + saldoInicial +
+                ", estado=" + estado +
+                ", clienteId=" + clienteId +
+                ", movimientos=" + movimientos +
+                '}';
+    }
 }
 

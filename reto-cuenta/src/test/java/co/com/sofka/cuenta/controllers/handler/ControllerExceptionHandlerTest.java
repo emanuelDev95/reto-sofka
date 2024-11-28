@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ControllerExceptionHandlerTest {
+class ControllerExceptionHandlerTest {
 
     @Mock
     private ObjectMapper objectMapper;
@@ -29,7 +29,7 @@ public class ControllerExceptionHandlerTest {
 
 
     @Test
-    public void testResourceNotFoundException() {
+    void testResourceNotFoundException() {
         ResourceNotFoundException ex = new ResourceNotFoundException("Resource not found");
         ErrorMessageResponse response = controllerExceptionHandler.resourceNotFoundException(ex);
 
@@ -38,7 +38,7 @@ public class ControllerExceptionHandlerTest {
     }
 
     @Test
-    public void testBadRequestExceptionHandler() {
+    void testBadRequestExceptionHandler() {
         BadRequestException ex = new BadRequestException("Bad request");
         ResponseEntity<ErrorMessageResponse> response = controllerExceptionHandler.badRequestExceptionHandler(ex);
 
@@ -48,7 +48,7 @@ public class ControllerExceptionHandlerTest {
     }
 
     @Test
-    public void testGlobalExceptionHandler() {
+    void testGlobalExceptionHandler() {
         Exception ex = new Exception("Internal server error");
         ResponseEntity<ErrorMessageResponse> response = controllerExceptionHandler.globalExceptionHandler(ex);
 
@@ -58,7 +58,7 @@ public class ControllerExceptionHandlerTest {
     }
 
     @Test
-    public void testRestClientExceptionHandler() throws Exception {
+    void testRestClientExceptionHandler() throws Exception {
         RestClientException ex = new RestClientException("{\"value\":500,\"date\":\"2024-11-18T18:27:32.095+00:00\",\"message\":\"Client error\"}");
         ErrorMessageResponse errorMessageResponse = ErrorMessageResponse.builder()
                 .value(500)

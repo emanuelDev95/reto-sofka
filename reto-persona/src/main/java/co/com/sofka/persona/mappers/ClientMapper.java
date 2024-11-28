@@ -1,5 +1,6 @@
 package co.com.sofka.persona.mappers;
 
+import co.com.sofka.persona.models.dto.ClienteCuentaDto;
 import co.com.sofka.persona.models.dto.ClienteDto;
 import co.com.sofka.persona.persistence.entities.Cliente;
 import org.springframework.stereotype.Component;
@@ -36,5 +37,19 @@ public class ClientMapper implements GenericMapper<ClienteDto, Cliente, Long> {
                 .telefono(entity.getTelefono())
                 .edad(entity.getEdad())
                 .build();
+    }
+
+    public Cliente toEntity(ClienteCuentaDto dto){
+        return Cliente.builder()
+                .estado(dto.estado())
+                .contrasena(dto.contrasena())
+                .identificacion(dto.identificacion())
+                .nombre(dto.nombre())
+                .genero(dto.genero())
+                .direccion(dto.direccion())
+                .telefono(dto.telefono())
+                .edad(dto.edad())
+                .build();
+
     }
 }

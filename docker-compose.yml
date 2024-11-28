@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  reto-persona:
+    image: reto-persona:latest
+    build:
+      context: ./reto-persona
+    ports:
+      - "8080:8080"  # Este puerto es solo para acceso externo
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-persona:3306/persona?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: persona_password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      KAFKA_SERVER: kafka:29092  # Cambiado a kafka:29092 para conectarse internamente
+    networks:
+      - reto-net
+    depends_on:
+      - kafka  # Asegura que Kafka esté listo antes de iniciar
+
+  reto-cuenta:
+    image: reto-cuenta:latest
+    build:
+      context: ./reto-cuenta
+    ports:
+      - "8081:8081"  # Este puerto es solo para acceso externo
+    environment:
+      SERVER_PORT: 8081
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-cuenta:3306/cuenta?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: cuenta_password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: true
+      CUENTA_API_URL: http://reto-persona:8080/api/cliente  # Comunicación con reto-persona
+      KAFKA_SERVER: kafka:29092  # Cambiado a kafka:29092 para conectarse internamente
+    networks:
+      - reto-net
+    depends_on:
+      - kafka  # Asegura que Kafka esté listo antes de iniciar
+
+  db-persona:
+    image: mysql:8.0
+    container_name: mysql_persona
+    environment:
+      MYSQL_ROOT_PASSWORD: persona_password
+      MYSQL_DATABASE: persona
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_persona_data:/var/lib/mysql
+    networks:
+      - reto-net
+
+  db-cuenta:
+    image: mysql:8.0
+    container_name: mysql_cuenta
+    environment:
+      MYSQL_ROOT_PASSWORD: cuenta_password
+      MYSQL_DATABASE: cuenta
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_cuenta_data:/var/lib/mysql
+    networks:
+      - reto-net
+  
+  ### Zookeeper
+  zookeeper:
+    container_name: zookeeper
+    image: confluentinc/cp-zookeeper:7.4.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - reto-net
+
+  ### Kafka
+  kafka:
+    container_name: kafka
+    image: confluentinc/cp-kafka:7.4.0
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    networks:
+      - reto-net
+
+volumes:
+  mysql_persona_data:
+  mysql_cuenta_data:
+
+networks:
+  reto-net:
+    driver: bridge

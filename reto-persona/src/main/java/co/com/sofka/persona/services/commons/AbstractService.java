@@ -3,25 +3,19 @@ package co.com.sofka.persona.services.commons;
 import co.com.sofka.persona.exceptions.ResourceNotFoundException;
 import co.com.sofka.persona.mappers.GenericMapper;
 import co.com.sofka.persona.persistence.entities.AbstractEntity;
+import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Transactional
+@AllArgsConstructor
 public abstract class AbstractService<E extends AbstractEntity<K>, D, K> implements GenericService<D,K> {
 
     protected JpaRepository<E,K> repository;
     protected GenericMapper<D,E, K> mapper;
     protected String notFoundMessage;
-
-
-
-    protected AbstractService(JpaRepository<E, K> repository, GenericMapper<D, E, K> mapper, String notFoundMessage) {
-        this.repository = repository;
-        this.mapper = mapper;
-        this.notFoundMessage = notFoundMessage;
-    }
 
 
     @Override

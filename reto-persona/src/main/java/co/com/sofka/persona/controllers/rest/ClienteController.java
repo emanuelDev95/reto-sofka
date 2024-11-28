@@ -1,5 +1,6 @@
 package co.com.sofka.persona.controllers.rest;
 
+import co.com.sofka.persona.models.dto.ClienteCuentaDto;
 import co.com.sofka.persona.models.dto.ClienteDto;
 import co.com.sofka.persona.models.response.MessageResponse;
 import co.com.sofka.persona.services.ClienteService;
@@ -67,5 +68,15 @@ public class ClienteController {
                 .build());
 
 
+    }
+
+    @PostMapping("/client-account")
+    public ResponseEntity<MessageResponse<ClienteDto>> saveWithAccount(@RequestBody ClienteCuentaDto entity) {
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new MessageResponse<>(
+                        "Almacenado Exitosamente",
+                        HttpStatus.CREATED.value(),
+                        this.clienteService.saveClienteCuenta(entity)));
     }
 }

@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CuentaController.class)
-public class CuentaControllerTest {
+class CuentaControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -33,8 +33,15 @@ public class CuentaControllerTest {
 
 
     @Test
-    public void testSave() throws Exception {
-        CuentaDto responseDto = new CuentaDto("123456", TipoCuenta.AHORRO, BigDecimal.valueOf(1000), true, "Cliente1");
+    void testSave() throws Exception {
+        CuentaDto responseDto = new CuentaDto(
+                1L,
+                "123456",
+                TipoCuenta.AHORRO,
+                BigDecimal.valueOf(1000),
+                true,
+                "Cliente1");
+
         when(cuentaService.save(any(CuentaRequestDto.class))).thenReturn(responseDto);
 
         mockMvc.perform(post("/api/cuentas")
@@ -50,10 +57,10 @@ public class CuentaControllerTest {
     }
 
     @Test
-    public void testGetAll() throws Exception {
+    void testGetAll() throws Exception {
         List<CuentaDto> cuentaList = Arrays.asList(
-                new CuentaDto("123456", TipoCuenta.AHORRO, BigDecimal.valueOf(1000), true, "Cliente1"),
-                new CuentaDto("654321", TipoCuenta.CORRIENTE, BigDecimal.valueOf(2000), false, "Cliente2")
+                new CuentaDto(1L,"123456", TipoCuenta.AHORRO, BigDecimal.valueOf(1000), true, "Cliente1"),
+                new CuentaDto(2L,"654321", TipoCuenta.CORRIENTE, BigDecimal.valueOf(2000), false, "Cliente2")
         );
         when(cuentaService.getAll()).thenReturn(cuentaList);
 
@@ -67,8 +74,8 @@ public class CuentaControllerTest {
     }
 
     @Test
-    public void testGetById() throws Exception {
-        CuentaDto cuentaDto = new CuentaDto("123456", TipoCuenta.AHORRO, BigDecimal.valueOf(1000), true, "Cliente1");
+    void testGetById() throws Exception {
+        CuentaDto cuentaDto = new CuentaDto(1L,"123456", TipoCuenta.AHORRO, BigDecimal.valueOf(1000), true, "Cliente1");
         when(cuentaService.getById(anyLong())).thenReturn(cuentaDto);
 
         mockMvc.perform(get("/api/cuentas/{id}", 1L)
@@ -83,7 +90,7 @@ public class CuentaControllerTest {
     }
 
     @Test
-    public void testDeleteById() throws Exception {
+    void testDeleteById() throws Exception {
         mockMvc.perform(delete("/api/cuentas/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -91,8 +98,8 @@ public class CuentaControllerTest {
     }
 
     @Test
-    public void testUpdate() throws Exception {
-        CuentaDto responseDto = new CuentaDto("123456", TipoCuenta.AHORRO, BigDecimal.valueOf(1000), true, "Cliente1");
+    void testUpdate() throws Exception {
+        CuentaDto responseDto = new CuentaDto(1L,"123456", TipoCuenta.AHORRO, BigDecimal.valueOf(1000), true, "Cliente1");
         when(cuentaService.update(any(CuentaRequestDto.class), anyLong())).thenReturn(responseDto);
 
         mockMvc.perform(put("/api/cuentas/{id}", 1L)

@@ -35,6 +35,7 @@ public class CuentaMapper  {
     public CuentaDto cuentaToCuentaDto(Cuenta cuenta, ClienteDto clienteDto) {
 
         return  CuentaDto.builder()
+                .id(cuenta.getId())
                 .numeroCuenta(cuenta.getNumeroCuenta())
                 .tipo(cuenta.getTipoCuenta())
                 .saldo(cuenta.getSaldoDisponible())

@@ -34,7 +34,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class MovimientoServiceImplTest {
+ class MovimientoServiceImplTest {
 
     @Mock
     private CuentaRepository cuentaRepository;
@@ -56,7 +56,7 @@ public class MovimientoServiceImplTest {
     private MovimientoDTO movimientoDTO;
 
     @BeforeEach
-    public void setUp() {
+     void setUp() {
         cuenta = new Cuenta();
         cuenta.setId(1L);
         cuenta.setSaldoDisponible(BigDecimal.valueOf(1000));
@@ -66,7 +66,7 @@ public class MovimientoServiceImplTest {
     }
 
     @Test
-    public void testSave() {
+     void testSave() {
         when(cuentaRepository.findById(anyLong())).thenReturn(Optional.of(cuenta));
         when(movimientoMapper.requestToEntity(any(MovimientoRequestDTO.class))).thenReturn(new Movimiento());
         when(movimientoMapper.toResponseDTO(any(Movimiento.class))).thenReturn(movimientoDTO);
@@ -79,7 +79,7 @@ public class MovimientoServiceImplTest {
     }
 
     @Test
-    public void testGetAll() {
+     void testGetAll() {
         when(movimientoRepository.findAll()).thenReturn(List.of(new Movimiento(), new Movimiento()));
         when(movimientoMapper.toResponseDTO(any(Movimiento.class))).thenReturn(movimientoDTO);
 
@@ -90,7 +90,7 @@ public class MovimientoServiceImplTest {
     }
 
     @Test
-    public void testGetById() {
+     void testGetById() {
         when(movimientoRepository.findById(anyLong())).thenReturn(Optional.of(new Movimiento()));
         when(movimientoMapper.toResponseDTO(any(Movimiento.class))).thenReturn(movimientoDTO);
 
@@ -101,7 +101,7 @@ public class MovimientoServiceImplTest {
     }
 
     @Test
-    public void testDelete() {
+     void testDelete() {
         doNothing().when(movimientoRepository).deleteById(anyLong());
 
         movimientoService.delete(1L);
@@ -110,7 +110,7 @@ public class MovimientoServiceImplTest {
     }
 
     @Test
-    public void testUpdate() {
+     void testUpdate() {
         when(cuentaRepository.findById(anyLong())).thenReturn(Optional.of(cuenta));
         when(movimientoMapper.requestToEntity(any(MovimientoRequestDTO.class))).thenReturn(new Movimiento());
         when(movimientoMapper.toResponseDTO(any(Movimiento.class))).thenReturn(movimientoDTO);
@@ -123,7 +123,7 @@ public class MovimientoServiceImplTest {
     }
 
     @Test
-    public void testGetReportByDateAndCustomer() {
+     void testGetReportByDateAndCustomer() {
         when(clienteService.getClienteById(anyLong())).thenReturn(new ClienteDto(1L, "123456", "Cliente1", "M", 30, "Direccion", "123456789", "password", true));
         when(movimientoRepository.findByCuentaClienteIdAndFechaBetween(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class), eq(MovimientoProjection.class)))
                 .thenReturn(List.of(getMovimientoProjection()));
@@ -147,19 +147,19 @@ public class MovimientoServiceImplTest {
     }
 
     @Test
-    public void testValidarMontoNoValido() {
+     void testValidarMontoNoValido() {
         assertThrows(IllegalArgumentException.class, () -> movimientoService.save(new MovimientoRequestDTO(1L, BigDecimal.ZERO)));
     }
 
     @Test
-    public void testObtenerCuentaPorIdNotFounf() {
+     void testObtenerCuentaPorIdNotFound() {
         when(cuentaRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> movimientoService.save(movimientoRequestDTO));
     }
 
     @Test
-    public void testValidarSaldoNoDisponible() {
+     void testValidarSaldoNoDisponible() {
         cuenta.setSaldoDisponible(BigDecimal.valueOf(100));
         when(cuentaRepository.findById(anyLong())).thenReturn(Optional.of(cuenta));
 
@@ -167,7 +167,7 @@ public class MovimientoServiceImplTest {
     }
 
     @Test
-    public void testActualizarSaldoCuenta() {
+     void testActualizarSaldoCuenta() {
         when(cuentaRepository.findById(anyLong())).thenReturn(Optional.of(cuenta));
         when(movimientoMapper.requestToEntity(any(MovimientoRequestDTO.class))).thenReturn(new Movimiento());
         when(movimientoMapper.toResponseDTO(any(Movimiento.class))).thenReturn(movimientoDTO);
@@ -176,6 +176,8 @@ public class MovimientoServiceImplTest {
 
         assertEquals(BigDecimal.valueOf(1500), cuenta.getSaldoDisponible());
     }
+
+    @Test
 
     /**Metodo pra obtener movimiento**/
 

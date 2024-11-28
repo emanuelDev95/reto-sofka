@@ -53,7 +53,7 @@ class CuentaServiceImplTest {
                 BigDecimal.valueOf(1000), BigDecimal.valueOf(1000), true, 1L, new ArrayList<>());
 
         ClienteDto clienteDto = new ClienteDto(1L, "12345", "Juan", "Masculino", 30, "Calle Ficticia 123", "555-1234", "password123", true);
-        CuentaDto cuentaDto = new CuentaDto("123456789", TipoCuenta.AHORRO,
+        CuentaDto cuentaDto = new CuentaDto(1L,"123456789", TipoCuenta.AHORRO,
                 BigDecimal.valueOf(1000), true, "Juan");
 
         when(clienteService.getClienteById(1L)).thenReturn(clienteDto);
@@ -78,7 +78,7 @@ class CuentaServiceImplTest {
                 BigDecimal.valueOf(1000), BigDecimal.valueOf(1000), true, 1L, new ArrayList<>());
 
         ClienteDto clienteDto = new ClienteDto(1L, "12345", "Juan", "Masculino", 30, "Calle Ficticia 123", "555-1234", "password123", true);
-        CuentaDto cuentaDto = new CuentaDto("123456789", TipoCuenta.AHORRO,
+        CuentaDto cuentaDto = new CuentaDto(1L,"123456789", TipoCuenta.AHORRO,
                 BigDecimal.valueOf(1000), true, "Juan");
 
         when(cuentaRepository.findById(1L)).thenReturn(Optional.of(cuenta));
@@ -123,7 +123,7 @@ class CuentaServiceImplTest {
                 BigDecimal.valueOf(1000), BigDecimal.valueOf(1000), true, 1L, new ArrayList<>());
 
         ClienteDto clienteDto = new ClienteDto(1L, "12345", "Juan", "Masculino", 30, "Calle Ficticia 123", "555-1234", "password123", true);
-        CuentaDto cuentaDto = new CuentaDto("123456789", TipoCuenta.CORRIENTE,
+        CuentaDto cuentaDto = new CuentaDto(1L,"123456789", TipoCuenta.CORRIENTE,
                 BigDecimal.valueOf(1500), true, "Juan");
 
         when(cuentaRepository.findById(1L)).thenReturn(Optional.of(cuenta));

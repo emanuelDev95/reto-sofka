@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 
 @Builder
 public record CuentaDto(
+        Long id,
         String numeroCuenta,
         TipoCuenta tipo,
         BigDecimal saldo,
